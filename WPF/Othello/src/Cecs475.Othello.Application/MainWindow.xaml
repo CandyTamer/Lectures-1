@@ -6,14 +6,25 @@
         xmlns:local="clr-namespace:Cecs475.Othello.Application"
         mc:Ignorable="d"
         Title="Othello!" Width="500">
+    <Window.Resources>
+        <local:ScoreConverter x:Key="ScoreConverter"/>
+    </Window.Resources>
+
     <DockPanel>
+        <ToolBar Height="30" DockPanel.Dock="Top" FontSize="10" DataContext="{Binding ElementName=OthelloView}">
+            <Button x:Name="Undo" Click="undo_Click">
+                Undo Move
+            </Button>
+        </ToolBar>
         <StatusBar Height="30" DockPanel.Dock="Bottom" FontSize="10" DataContext="{Binding ElementName=OthelloView}">
             <WrapPanel>
                 <Label>Score:</Label>
-                <Label Content="{Binding Model.BoardValue}"/>
+                <Label Content="{Binding Model.BoardValue, Converter={StaticResource ScoreConverter}}"/>
+                <Label>Currnet Player:</Label>
+                <Label Content="{Binding Model.CurrentPlayer}"/>
             </WrapPanel>
         </StatusBar>
         <local:OthelloView x:Name="OthelloView"/>
-        
     </DockPanel>
+
 </Window>
