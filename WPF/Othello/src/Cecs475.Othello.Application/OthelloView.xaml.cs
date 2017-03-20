@@ -58,25 +58,27 @@ namespace Cecs475.Othello.Application {
 	/// Converts from an integer player number to an Ellipse representing that player's token.
 	/// </summary>
 	public class OthelloSquarePlayerConverter : IValueConverter {
-		private static SolidColorBrush WHITE_BRUSH = new SolidColorBrush(Colors.White);
-		private static SolidColorBrush BLACK_BRUSH = new SolidColorBrush(Colors.Black);
+		private static SolidColorBrush BLUE_BRUSH = new SolidColorBrush(Colors.Blue);
+		private static SolidColorBrush PURPLE_BRUSH = new SolidColorBrush(Colors.Purple);
 
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-			int player = (int)value;
-			if (player == 0) {
-				return null;
-			}
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+            int player = (int)value;
+            if (player == 0) {
+                return null;
+            }
 
-			Ellipse token = new Ellipse() {
-				Fill = GetFillBrush(player)
+            Rectangle token = new Rectangle() {
+                Fill = GetFillBrush(player),
+                Height = 30,
+                Width = 40
 			};
 			return token;
 		}
 
 		private static SolidColorBrush GetFillBrush(int player) {
 			if (player == 1)
-				return BLACK_BRUSH;
-			return WHITE_BRUSH;
+				return PURPLE_BRUSH;
+			return BLUE_BRUSH;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
