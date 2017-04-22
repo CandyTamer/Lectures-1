@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Othello.Game {
+namespace Cecs475.BoardGames.Othello {
 	/// <summary>
 	/// Implements the board model for a game of othello. Tracks which squares of the 8x8 grid are occupied
 	/// by which player, as well as state for the current player and move history.
 	/// </summary>
-	public class OthelloBoard {
+	public class OthelloBoard : IGameBoard {
 		public const int BOARD_SIZE = 8;
 
 		// The board is represented by an 8x8 matrix of signed bytes. Each entry represents one square on the board.
 		private sbyte[,] mBoard = new sbyte[BOARD_SIZE, BOARD_SIZE];
-		
+
 		// Internally, we will represent pieces for each player as 1 or -1 (for player 2), which makes certain game 
 		// operations easier to code. Those values don't make sense to the public, however, so we will expose them in a 
 		// public property by mapping -1 to a value of 2. This will reduce coupling between other components and the 
@@ -23,13 +22,13 @@ namespace Othello.Game {
 		/// </summary>
 		public OthelloBoard() {
 			mCurrentPlayer = 1;
-			MoveHistory = new List<OthelloMove>();
+			MoveHistory = new List<IGameMove>();
 			mBoard[BOARD_SIZE / 2 - 1, BOARD_SIZE / 2 - 1] = -1;
 			mBoard[BOARD_SIZE / 2, BOARD_SIZE / 2] = -1;
 			mBoard[BOARD_SIZE / 2, BOARD_SIZE / 2 - 1] = 1;
 			mBoard[BOARD_SIZE / 2 - 1, BOARD_SIZE / 2] = 1;
 		}
-		
+
 		/// <summary>
 		/// The player whose move it is.
 		/// </summary>
@@ -56,7 +55,7 @@ namespace Othello.Game {
 		/// <summary>
 		/// Gets a list 
 		/// </summary>
-		public IList<OthelloMove> MoveHistory {
+		public IList<IGameMove> MoveHistory {
 			get; private set;
 		}
 
@@ -79,7 +78,9 @@ namespace Othello.Game {
 		/// Applies the given move to the board state.
 		/// </summary>
 		/// <param name="m">a move that is assumed to be valid</param>
-		public void ApplyMove(OthelloMove m) {
+		public void ApplyMove(IGameMove move) {
+			OthelloMove m = move as OthelloMove;
+
 			// If the move is a pass, then we do very little.
 			if (m.IsPass) {
 				PassCount++;
@@ -154,7 +155,7 @@ namespace Othello.Game {
 		/// Returns an enumeration of moves that would be valid to apply to the current board state.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<OthelloMove> GetPossibleMoves() {
+		public IEnumerable<IGameMove> GetPossibleMoves() {
 			List<OthelloMove> moves = new List<OthelloMove>();
 
 			// Iterate through all 64 squares on the board, looking for an empty position.
@@ -205,13 +206,12 @@ namespace Othello.Game {
 		/// Undoes the last move, restoring the game to its state before the move was applied.
 		/// </summary>
 		public void UndoLastMove() {
-			OthelloMove m = MoveHistory[MoveHistory.Count - 1];
+			OthelloMove m = MoveHistory[MoveHistory.Count - 1] as OthelloMove;
 
 			// Note: there is a bug in this code.
 			if (!m.IsPass) {
 				// Reset the board at the move's position.
 				mBoard[m.Position.Row, m.Position.Col] = 0;
-				Value += mCurrentPlayer;
 
 				// Iterate through the move's recorded flipsets.
 				foreach (var flipSet in m.FlipSets) {
@@ -220,12 +220,11 @@ namespace Othello.Game {
 					for (int i = 1; i <= flipSet.Count; i++) {
 						pos = pos.Translate(flipSet.RowDelta, flipSet.ColDelta);
 						mBoard[pos.Row, pos.Col] = (sbyte)mCurrentPlayer;
-						Value += 2 * mCurrentPlayer;
 					}
 				}
 
 				// Check to see if the second-to-last move was a pass; if so, set PassCount.
-				if (MoveHistory.Count > 1 && MoveHistory[MoveHistory.Count - 2].IsPass) {
+				if (MoveHistory.Count > 1 && (MoveHistory[MoveHistory.Count - 2] as OthelloMove).IsPass) {
 					PassCount = 1;
 				}
 			}
