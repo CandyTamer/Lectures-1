@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,10 +16,18 @@ namespace Cecs475.Scheduling.Model {
 
 	public class Student {
 		public int Id { get; set; }
+
+        [MaxLength(32)]
+        [Required]
         public string FirstName { get; set; }
+
+        [MaxLength(32)]
+        [Required]
         public string LastName { get; set; }
-        public virtual ICollection<CourseGrade> Transcript { get; set; }
-        public virtual ICollection<CourseSection> EnrolledCourses { get; set; }
+
+        public virtual ICollection<CourseGrade> Transcript { get; set; } = new List<CourseGrade>();
+
+        public virtual ICollection<CourseSection> EnrolledCourses { get; set; } = new List<CourseSection>();
 		//public virtual ICollection<CourseSection> CompletedCourses { get; set; } = new List<CourseSection>();
 
 		public RegistrationResults CanRegisterForCourseSection(CourseSection section) {
@@ -68,7 +77,7 @@ namespace Cecs475.Scheduling.Model {
                                     (section.EndTime > c.StartTime && section.EndTime < c.EndTime))))
                            select c;
 
-            if (conflict.Count() != 0) {
+            if (conflict.Count() != 0) { //a time conflict exists
                 return RegistrationResults.TimeConflict;
             }
 

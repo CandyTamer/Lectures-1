@@ -23,7 +23,7 @@ namespace Cecs475.Scheduling.Model {
 		public virtual CatalogCourse CatalogCourse { get; set; }
 		public virtual Instructor Instructor { get; set; }
 		public virtual SemesterTerm Semester { get; set; }
-        public virtual ICollection<Student> EnrolledStudents { get; set; }
+        public virtual ICollection<Student> EnrolledStudents { get; set; } = new List<Student>();
 
         public int SectionNumber { get; set; }
 		public DaysOfWeek MeetingDays { get; set; }	
