@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Cecs475.Scheduling.Model {
@@ -22,10 +23,12 @@ namespace Cecs475.Scheduling.Model {
 		public virtual CatalogCourse CatalogCourse { get; set; }
 		public virtual Instructor Instructor { get; set; }
 		public virtual SemesterTerm Semester { get; set; }
+        public virtual ICollection<Student> EnrolledStudents { get; set; }
 
-		public int SectionNumber { get; set; }
+        public int SectionNumber { get; set; }
 		public DaysOfWeek MeetingDays { get; set; }	
 		public DateTime StartTime { get; set; }
 		public DateTime EndTime { get; set; }
+
 	}
 }

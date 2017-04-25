@@ -116,6 +116,11 @@ namespace Test {
 							Console.WriteLine($"{section.CatalogCourse}-{section.SectionNumber.ToString("D2")} -- " +
 								$"{section.Instructor.FirstName[0]} {section.Instructor.LastName} -- " +
 								$"{section.MeetingDays}, {section.StartTime.ToShortTimeString()} to {section.EndTime.ToShortTimeString()}");
+                            if (section.EnrolledStudents.Count > 0) {
+                                foreach (var student in section.EnrolledStudents) {
+                                    Console.WriteLine($"{student.LastName}, {student.FirstName}");
+                                }
+                            }
 						}
 						break;
 				}
