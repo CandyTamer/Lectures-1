@@ -133,8 +133,8 @@ namespace Test {
                             LastName = "Greil",
                         };
                         con.Students.Add(ike);
-                        cecs174_99.EnrolledStudents.Add(ike);
-                        cecs228_99.EnrolledStudents.Add(ike);
+                        //cecs174_99.EnrolledStudents.Add(ike);
+                        //cecs228_99.EnrolledStudents.Add(ike);
 
                         var julia = new Student() {
                             FirstName = "Julia",
