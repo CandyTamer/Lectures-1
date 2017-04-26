@@ -33,7 +33,7 @@ namespace Cecs475.Scheduling.Model {
 		public RegistrationResults CanRegisterForCourseSection(CourseSection section) {
             //checks for if they're enrolled in another section of that catalog course in that current semester
             var same = from c in EnrolledCourses
-                       where ((c.CatalogCourse.Id.Equals(section.Id)) && (c.Semester.Equals(section.Semester)))
+                       where ((c.CatalogCourse.Id.Equals(section.CatalogCourse.Id)) && (c.Semester.Equals(section.Semester)))
                        select c;
 
             //they're already enrolled in that course
@@ -81,6 +81,7 @@ namespace Cecs475.Scheduling.Model {
                 return RegistrationResults.TimeConflict;
             }
 
+            EnrolledCourses.Add(section);
             return RegistrationResults.Sucess;
 		}
 	}

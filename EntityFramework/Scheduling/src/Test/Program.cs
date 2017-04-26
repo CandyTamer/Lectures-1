@@ -14,7 +14,7 @@ namespace Test {
             int choice = -1;
             do {
                 Console.WriteLine("Menu:\n0. Quit\n1. Populate database\n2. Show courses\n3. Show course sections" +
-                    "\n4. Print student details");
+                    "\n4. Print student details \n5. Enroll in a course");
                 choice = Convert.ToInt32(Console.ReadLine());
 
                 switch (choice) {
@@ -132,6 +132,7 @@ namespace Test {
                             FirstName = "Ike",
                             LastName = "Greil",
                         };
+                        con.Students.Add(ike);
                         cecs174_99.EnrolledStudents.Add(ike);
                         cecs228_99.EnrolledStudents.Add(ike);
 
@@ -139,6 +140,8 @@ namespace Test {
                             FirstName = "Julia",
                             LastName = "Manfoy"
                         };
+                        con.Students.Add(julia);
+                        //cecs174_99.EnrolledStudents.Add(julia);
 
                         //add course grades
                         var ike_174 = new CourseGrade() {
@@ -215,31 +218,75 @@ namespace Test {
                         break;
 
                     case 4:
-                        Console.WriteLine("Enter the student's First and Last Name");
+                        Console.WriteLine("Enter a First and Last Name");
                         string name = Convert.ToString(Console.ReadLine());
+                        Console.WriteLine();
                         string[] fName = name.Split(' ');
+                        if (fName != null) {
+                            var first = fName[0]; var last = fName[1];
 
-                        Student info = con.Students.Where(s => s.FirstName.Equals(fName[0]) && (s.LastName.Equals(fName[1]))).FirstOrDefault();
-                        if (info != null) {
-                            Console.WriteLine($"{info.LastName}, {info.FirstName}\n");
+                            Student info = con.Students.Where(s => s.FirstName.Equals(first) && (s.LastName.Equals(last))).FirstOrDefault();
+                            if (info != null) {
+                                Console.WriteLine($"{info.LastName}, {info.FirstName}\n");
 
-                            if (info.Transcript.Count() > 0) {
-                                Console.WriteLine("Transcript:\n");
+                                if (info.Transcript.Count() > 0) {
+                                    Console.WriteLine("Transcript:\n");
 
-                                foreach (CourseGrade g in info.Transcript) {
-                                    Console.WriteLine($"{g.CourseSection.CatalogCourse.ToString()} ({g.Grade}), ");
+                                    foreach (CourseGrade g in info.Transcript) {
+                                        Console.WriteLine($"{g.CourseSection.CatalogCourse.ToString()} ({g.Grade}) ");
+                                    }
+                                    //Console.Write(string.Join(", ", course.Prerequisites));
+                                    Console.WriteLine();
                                 }
-                                //Console.Write(string.Join(", ", course.Prerequisites));
-                            }
 
-                            if(info.EnrolledCourses.Count() > 0) {
-                                //Console.WriteLine("Currently Enrolled:\n");
-                                //Console.Write(string.Join(", ", info.EnrolledCourses.ToString()));
-                                foreach (CourseSection s in info.EnrolledCourses) {
-                                    Console.WriteLine($"{s.CatalogCourse.ToString()}-{s.SectionNumber}");
+                                if (info.EnrolledCourses.Count() > 0) {
+                                    Console.WriteLine("Currently Enrolled:\n");
+                                    //Console.Write(string.Join(", ", info.EnrolledCourses.ToString()));
+                                    foreach (CourseSection s in info.EnrolledCourses) {
+                                        Console.WriteLine($"{s.CatalogCourse.ToString()}-{s.SectionNumber}");
+                                    }
                                 }
                             }
                         }
+                        break;
+
+                    case 5:
+                        Console.WriteLine("Enter a First and Last Name");
+                        name = Convert.ToString(Console.ReadLine());
+                        Console.WriteLine();
+                        fName = name.Split(' ');
+                        var First = fName[0]; var Last = fName[1];
+
+                        Console.WriteLine("Enter the course name and section number");
+                        name = Convert.ToString(Console.ReadLine());
+                        Console.WriteLine();
+                        fName = name.Split(' ', '-');
+                        var dName = fName[0]; var cNumber = fName[1]; var sNumber = Convert.ToInt32(fName[2]);
+
+                        var Student = con.Students.Where(s => s.FirstName.Equals(First) && (s.LastName.Equals(Last))).FirstOrDefault();
+                        var Course = con.Courses.Where(c => c.DepartmentName.Equals(dName) && (c.CourseNumber.Equals(cNumber))).First();
+                        fallSem = con.SemesterTerms.Where(s => s.Name == "Fall 2017").FirstOrDefault();
+                        var CourseSection = fallSem.CourseSections.Where(s => s.CatalogCourse.Equals(Course) && 
+                                                                                s.SectionNumber.Equals(sNumber)).FirstOrDefault();
+                        var result = Student.CanRegisterForCourseSection(CourseSection);
+                        switch (result) {
+                            case RegistrationResults.AlreadyCompleted:
+                                Console.WriteLine("This course has already been completed");
+                                break;
+                            case RegistrationResults.AlreadyEnrolled:
+                                Console.WriteLine("You are already enrolled in a section of this course");
+                                break;
+                            case RegistrationResults.PrerequisiteNotMet:
+                                Console.WriteLine("You haven't met the prerequisites needed to take this course");
+                                break;
+                            case RegistrationResults.Sucess:
+                                Console.WriteLine("You have succesfully enrolled in this course");
+                                break;
+                            case RegistrationResults.TimeConflict:
+                                Console.WriteLine("You are already enrolled in a course during that time");
+                                break;
+                        }
+
                         break;
                 }
                 Console.WriteLine();
