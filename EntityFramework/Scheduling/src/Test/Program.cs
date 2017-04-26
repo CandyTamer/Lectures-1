@@ -227,14 +227,17 @@ namespace Test {
                                 Console.WriteLine("Transcript:\n");
 
                                 foreach (CourseGrade g in info.Transcript) {
-                                    Console.WriteLine($"{g.CourseSection.ToString()} ({g.Grade}), ");
+                                    Console.WriteLine($"{g.CourseSection.CatalogCourse.ToString()} ({g.Grade}), ");
                                 }
                                 //Console.Write(string.Join(", ", course.Prerequisites));
                             }
 
                             if(info.EnrolledCourses.Count() > 0) {
-                                Console.WriteLine("Currently Enrolled:\n");
-                                Console.Write(string.Join(", ", info.EnrolledCourses.))
+                                //Console.WriteLine("Currently Enrolled:\n");
+                                //Console.Write(string.Join(", ", info.EnrolledCourses.ToString()));
+                                foreach (CourseSection s in info.EnrolledCourses) {
+                                    Console.WriteLine($"{s.CatalogCourse.ToString()}-{s.SectionNumber}");
+                                }
                             }
                         }
                         break;
